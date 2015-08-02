@@ -1,3 +1,22 @@
+exports.load = function (req, res, next, quizId) {
+  models.Quiz.find(quizId).then(
+    function(quiz) {
+      if (quiz) {
+        req.quiz = quiz;
+        next();
+      } else (next(new Error("No existe el quizId = " + quizId)))
+    }
+  ).catch(function(err) {next(err)});
+};
+
+exports.index = function (req, res) {
+  models.Quiz.findAll().then(
+    function(quizes) {
+      res.render('quizes/index.ejs', {quizes: quizes, errors: []});
+    }
+  ).catch(function(err) {next(err)});
+};
+
 exports.question = function(req, res) {
   res.render('quizes/question', {pregunta: 'Capital de Italia'});
 };
@@ -63,14 +82,6 @@ exports.update = function (req, res) {
       })
     }
   });
-};
-
-exports.index = function (req, res) {
-  models.Quiz.findAll().then(
-    function(quizes) {
-      res.render('quizes/index.ejs', {quizes: quizes, errors: []});
-    }
-  ).catch(function(err) {next(err)});
 };
 
 exports.destroy = function (req, res) {
